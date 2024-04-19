@@ -1,0 +1,336 @@
+Unable to show charts
+
+the “plt.show" command won’t work on the platform. Instead, the author will have to use the “plt.savefig” command to save the plot in the “/usercode/output” directory, and our platform will automatically render the plot (chart) in the output tab. The author can refer to the last code playground in the Code Widget or the Code Widget: Creating Charts lessons in the author’s guide to better understand how charts/plots are displayed on the platform.
+
+
+
+aws dynamodb create-table \
+    --table-name Mydata \
+    --attribute-definitions \
+        AttributeName=CourseName,AttributeType=S \
+        AttributeName=CourseID,AttributeType=N \
+    --key-schema \
+        AttributeName=CourseName,KeyType=HASH \
+        AttributeName=CourseID,KeyType=RANGE \
+    --provisioned-throughput \
+        ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --region us-east-1
+
+
+aws dynamodb create-table \
+    --table-name DoctorInfo \
+    --attribute-definitions \
+        AttributeName=id,AttributeType=S \
+        AttributeName=name,AttributeType=S \
+        AttributeName=email,AttributeType=S \
+        AttributeName=specialization,AttributeType=S \
+    --key-schema \
+        AttributeName=id,KeyType=HASH \
+    --provisioned-throughput \
+        ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --region us-east-1
+
+
+curl -X "PUT" -H "Content-Type: application/json" -d "{\"id\": \"123\", \"email\": \"12345\", \"name\": \"myitem\",\"specialization\":\"qwerty\"}" https://hma8htt5i2.execute-api.us-east-1.amazonaws.com/items
+
+
+///=-==========role we must provide  account id instead of this 500586365419  6713892350197760
+
+aws lambda create-function \
+    --function-name GetDoctors \
+    --runtime nodejs20.x \
+    --role  arn:aws:iam::994761167471:role/lambda-execution-role \
+    --handler index.handler \
+    --zip-file fileb://lambda.zip \
+    --region us-east-1
+
+
+    zip function.zip index.mjs
+
+
+
+aws apigateway create-rest-api --name 'DoctorAPI' --region us-east-1
+
+
+
+    aws apigatewayv2 create-api --name "DoctorAPI" --protocol-type HTTP --target "arn:aws:lambda:us-east-1:896802424618:function:GetDoctors"  --region us-east-1
+
+
+    aws apigatewayv2 create-api \
+    --name DoctorAPI \
+    --protocol-type HTTP \
+    --target arn:aws:lambda:us-east-1:399622365448:function:GetDoctors --region us-east-1 \
+    --cors-configuration AllowHeaders="*",AllowMethods="*",AllowOrigins="*",MaxAge=30000
+
+api_id=$(aws apigatewayv2 get-apis --query 'Items[?Name==`DoctorAPI`].ApiId' --output text --region us-east-1)
+aws apigatewayv2 update-api --api-id $api_id --cors-configuration AllowHeaders="*",AllowMethods="*",AllowOrigins="*",MaxAge=3600
+
+aws apigatewayv2 update-api \
+    --api-id "$api_id" \
+     --cors-configuration AllowHeaders="*",AllowMethods="*",AllowOrigins="*",MaxAge=3600
+
+
+
+-------------------------------------
+
+
+
+
+  aws apigatewayv2 create-integration --api-id "$api_id" \
+  --integration-type AWS_PROXY \
+  --integration-uri "arn:aws:lambda:us-east-1:399622365448:function:GetDoctors" \
+  --payload-format-version "2.0" --region us-east-1 
+  
+
+
+
+
+pykw5jva7e ---->  idapi key
+
+    aws apigatewayv2 create-integration --api-id "$api_id" \
+  --integration-type AWS_PROXY \
+  --integration-uri "arn:aws:lambda:us-east-1:409272572464:function:GetDoctors" \ 
+  --payload-format-version "2.0"   --region us-east-1 
+arn:aws:lambda:us-east-1:080640510939:function:GetDoctors
+/// we need integration id here
+
+ aws apigatewayv2 create-route --api-id "$api_id" --route-key "GET /items/{id}" --target "integrations/3k2cn4l" --region us-east-1
+ aws apigatewayv2 create-route --api-id "$api_id" --route-key "GET /items" --target "integrations/3k2cn4l" --region us-east-1
+ aws apigatewayv2 create-route --api-id "$api_id" --route-key "PUT /items" --target "integrations/3k2cn4l" --region us-east-1
+ aws apigatewayv2 create-route --api-id "$api_id" --route-key "DELETE /items/{id}" --target "integrations/3k2cn4l" --region us-east-1
+
+
+
+
+ # Get API ID from the previously created API
+api_id=$(aws apigatewayv2 get-apis --query 'Items[?Name==`MyHTTPAPI`].ApiId' --output text)
+
+# Create an integration
+aws apigatewayv2 create-integration --api-id "$api_id" --integration-type AWS_PROXY \
+  --integration-uri "arn:aws:lambda:REGION:ACCOUNT_ID:function:YOUR_LAMBDA_FUNCTION_NAME" \
+  --integration-method POST
+
+# Create a route
+aws apigatewayv2 create-route --api-id "$api_id" --route-key "ANY /{proxy+}" --target "integrations/YOUR_INTEGRATION_ID"
+
+
+
+aws lambda add-permission --function-name GetDoctors \
+--statement-id apigateway-get --action lambda:InvokeFunction \
+--principal apigateway.amazonaws.com \
+--source-arn "arn:aws:execute-api:us-east-1:624105092837:kgwcoerfr4/*/GET/items/"
+
+ aws lambda add-permission --function-name GetDoctors \
+--statement-id apigateway-get --action lambda:InvokeFunction \
+--principal apigateway.amazonaws.com \
+--source-arn "arn:aws:execute-api:us-east-1:624105092837:kgwcoerfr4/*/GET/items/"
+
+
+aws lambda add-permission --function-name GetDoctors \
+--statement-id apigateway-delete --action lambda:InvokeFunction \
+--principal apigateway.amazonaws.com \
+--source-arn "arn:aws:execute-api:us-east-1:624105092837:kgwcoerfr4/*/DELETE/items/{id}"
+"arn:aws:execute-api:us-east-1:624105092837:bh1o3r5e8c/default/*/"
+
+"arn:aws:apigateway:us-east-1:080640510939:/apis/1v16an4xwk/default/*/"
+
+
+
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  ScanCommand,
+  PutCommand,
+  GetCommand,
+  DeleteCommand,
+} from "@aws-sdk/lib-dynamodb";
+
+const client = new DynamoDBClient({});
+
+const dynamo = DynamoDBDocumentClient.from(client);
+
+const tableName = "doctorInfo";
+
+export const handler = async (event, context) => {
+  let body;
+  let statusCode = 200;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  try {
+    switch (event.routeKey) {
+      case "DELETE /items/{id}":
+        await dynamo.send(
+          new DeleteCommand({
+            TableName: tableName,
+            Key: {
+              id: event.pathParameters.id,
+            },
+          })
+        );
+        body = `Deleted item ${event.pathParameters.id}`;
+        break;
+      case "GET /items/{id}":
+        body = await dynamo.send(
+          new GetCommand({
+            TableName: tableName,
+            Key: {
+              id: event.pathParameters.id,
+            },
+          })
+        );
+        body = body.Item;
+        break;
+      case "GET /items":
+        body = await dynamo.send(
+          new ScanCommand({ TableName: tableName })
+        );
+        body = body.Items;
+        break;
+      case "PUT /items":
+        let requestJSON = JSON.parse(event.body);
+        await dynamo.send(
+          new PutCommand({
+            TableName: tableName,
+            Item: {
+              id: requestJSON.id,
+              name: requestJSON.name,
+              specialization: requestJSON.specialization,
+              email:requestJSON.email,
+            },
+          })
+        );
+        body = `Put item ${requestJSON.id}`;
+        break;
+      default:
+        throw new Error(`Unsupported route: "${event.routeKey}"`);
+    }
+  } catch (err) {
+    statusCode = 400;
+    body = err.message;
+  } finally {
+    body = JSON.stringify(body);
+  }
+
+  return {
+    statusCode,
+    body,
+    headers,
+  };
+};
+
+
+
+
+
+
+
+'
+
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  ScanCommand,
+  PutCommand,
+  GetCommand,
+  DeleteCommand,
+} from "@aws-sdk/lib-dynamodb";
+
+const client = new DynamoDBClient({});
+
+const dynamo = DynamoDBDocumentClient.from(client);
+
+const tableName = "UserInfo";
+
+export const handler = async (event, context) => {
+  let body;
+  let statusCode = 200;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  try {
+    switch (event.routeKey) {
+      case "DELETE /items/{id}":
+        await dynamo.send(
+          new DeleteCommand({
+            TableName: tableName,
+            Key: {
+              id: event.pathParameters.id,
+            },
+          })
+        );
+        body = `Deleted item ${event.pathParameters.id}`;
+        break;
+      case "GET /items/{id}":
+      const getItemResponse = await dynamo.send(
+        new GetCommand({
+          TableName: tableName,
+          Key: {
+            id: event.pathParameters.id,
+          },
+        })
+      );
+    
+      if (!getItemResponse.Item) {
+        statusCode = 404; // Not Found status code
+        body = "Item not found"; // Custom message when item is not found
+      } else {
+        body = getItemResponse.Item;
+      }
+      break;
+
+      case "GET /items":
+        body = await dynamo.send(
+          new ScanCommand({ TableName: tableName })
+        );
+        body = body.Items;
+        break;
+        
+      case "PUT /items":
+        let requestJSON = JSON.parse(event.body);
+        await dynamo.send(
+          new PutCommand({
+            TableName: tableName,
+            Item: {
+              id: requestJSON.id,
+              UserName: requestJSON.UserName,
+              Password: requestJSON.Password,
+            },
+          })
+        );
+        body = `Put item ${requestJSON.id}`;
+        break;
+      default:
+        throw new Error(`Unsupported route: "${event.routeKey}"`);
+    }
+  } catch (err) {
+    statusCode = 400;
+    body = err.message;
+  } finally {
+    body = JSON.stringify(body);
+  }
+
+  return {
+    statusCode,
+    body,
+    headers,
+  };
+};
+
+
+
+aws apigateway put-integration --rest-api-id 1v16an4xwk --resource-id <YOUR_RESOURCE_ID> --http-method ANY --type AWS_PROXY --integration-http-method ANY --uri arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:<ACCOUNT_ID>:function:ApplicationServer/invocations
+
+
+
+
+aws apigateway put-integration --region us-east-1 --rest-api-id 6xqx3fvbzh --resource-id mhpl7l --http-method GET  --type AWS         --integration-http-method POST --uri arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:593151364131:function:GetDoctors/invocations 
+
+
+
+aws lambda add-permission --function-name GetDoctors\
+--statement-id apigateway-get --action lambda:InvokeFunction \
+--principal apigateway.amazonaws.com \
+--source-arn "arn:aws:execute-api:us-east-1:773625752851:mfmel7kct0/default/GET/"
